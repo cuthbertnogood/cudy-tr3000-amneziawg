@@ -1,6 +1,6 @@
 # AmneziaWG на VPS (Ubuntu / Debian)
 
-VPS с публичным IPv4 за пределами РФ, root по SSH. Порт **UDP 443** (или свой `WG_PORT`) должен быть открыт в firewall панели хостера.
+VPS с публичным IPv4, root по SSH. Порт **UDP 443** (или свой `WG_PORT`) должен быть открыт в firewall панели хостера.
 
 ## 1. Подготовка
 
