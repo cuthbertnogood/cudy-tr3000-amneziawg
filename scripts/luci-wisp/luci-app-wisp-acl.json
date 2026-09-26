@@ -4,15 +4,20 @@
 		"read": {
 			"file": {
 				"/usr/libexec/wisp-switch.sh": [ "exec" ],
-				"/bin/sh": [ "exec" ]
+				"/usr/libexec/wisp-scan-worker.sh": [ "exec" ],
+				"/bin/sh": [ "exec" ],
+				"/tmp/wisp-scan.state": [ "read" ],
+				"/tmp/wisp-scan.out": [ "read" ],
+				"/tmp/wisp-scan.err": [ "read" ]
 			},
 			"ubus": {
-				"file": [ "exec" ]
+				"file": [ "exec", "read" ]
 			}
 		},
 		"write": {
 			"file": {
 				"/usr/libexec/wisp-switch.sh": [ "exec" ],
+				"/usr/libexec/wisp-scan-worker.sh": [ "exec" ],
 				"/bin/sh": [ "exec" ]
 			},
 			"ubus": {

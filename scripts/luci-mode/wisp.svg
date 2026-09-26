@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 148" role="img" aria-label="1KG=K9 @568<: B@0D8: G5@57 Wi-Fi">
+  <rect width="360" height="148" rx="12" fill="#f6f8fa"/>
+  <g fill="none" stroke="#24292f" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="22" y="46" width="36" height="58" rx="6" fill="#fff"/>
+    <rect x="32" y="54" width="16" height="28" rx="2" fill="#eaeef2" stroke="none"/>
+    <circle cx="40" cy="92" r="2" fill="#57606a" stroke="none"/>
+    <path d="M78 74h28" stroke="#1a7f37"/>
+    <rect x="112" y="52" width="52" height="36" rx="6" fill="#fff"/>
+    <path d="M124 70h28"/>
+    <path d="M170 70h36" stroke="#1a7f37"/>
+    <path d="M214 58c8 6 8 18 0 24" stroke="#1a7f37"/>
+    <path d="M222 50c14 10 14 28 0 38" stroke="#1a7f37"/>
+    <path d="M230 42c20 14 20 42 0 56" stroke="#1a7f37"/>
+    <circle cx="292" cy="74" r="28" fill="#fff"/>
+    <path d="M292 54c8 6 12 12 12 20s-4 14-12 20c-8-6-12-12-12-20s4-14 12-20z"/>
+    <path d="M276 74h32"/>
+    <path d="M292 58c6 4 8 10 8 16s-2 12-8 16"/>
+    <path d="M292 58c-6 4-8 10-8 16s2 12 8 16"/>
+  </g>
+  <text x="22" y="128" fill="#57606a" font-family="ui-sans-serif,system-ui,sans-serif" font-size="12">B5;5D>= � Cudy � WiFi � 8=B5@=5B</text>
+</svg>

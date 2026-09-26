@@ -2,25 +2,32 @@
 # Host-route до AmneziaWG endpoint через активный WISP (wwan5 / wwan24).
 #
 # На роутере: /etc/hotplug.d/iface/99-awg-endpoint
-# Установка:  WG_ENDPOINT=VPS_IP sh wwan-endpoint-route.sh --install
+# Установка:  sh wwan-endpoint-route.sh --install
+# Ручной прогон: INTERFACE=wwan5 ACTION=ifup sh wwan-endpoint-route.sh
 #
-WG_IF="${WG_IF:-wg0}"
-HOTPLUG_DST="/etc/hotplug.d/iface/99-awg-endpoint"
-
-endpoint_from_uci() {
-  uci -q get network.endpoint_host.target 2>/dev/null \
-    || uci -q get network.wgvps.endpoint_host 2>/dev/null \
-    || true
+# Endpoint: env → /etc/amnezia/endpoint → UCI peer (wgvps / wgserver)
+resolve_endpoint() {
+  if [ -n "${WG_ENDPOINT:-}" ]; then
+    echo "${WG_ENDPOINT}"
+    return
+  fi
+  if [ -f /etc/amnezia/endpoint ]; then
+    head -n1 /etc/amnezia/endpoint | tr -d ' \t\r\n'
+    return
+  fi
+  for s in wgvps wgserver; do
+    h=$(uci -q get "network.${s}.endpoint_host" 2>/dev/null) || true
+    [ -n "${h}" ] && echo "${h}" && return
+  done
+  echo ''
 }
-
-ENDPOINT="${WG_ENDPOINT:-}"
-[ -z "${ENDPOINT}" ] && ENDPOINT="$(endpoint_from_uci)"
-
-if [ -z "${ENDPOINT}" ] && [ "${1:-}" = "--install" ]; then
-  echo "Задайте WG_ENDPOINT=<публичный IP VPS>" >&2
-  exit 1
+ENDPOINT="$(resolve_endpoint)"
+WG_IF="${WG_IF:-wg0}"
+# без известного IP endpoint host-route не ставим
+if [ -z "${ENDPOINT}" ] && [ "${1:-}" != "--install" ]; then
+  exit 0
 fi
-[ -z "${ENDPOINT}" ] && exit 0
+HOTPLUG_DST="/etc/hotplug.d/iface/99-awg-endpoint"
 
 if [ "${1:-}" = "--install" ]; then
   SRC="$0"
@@ -56,6 +63,7 @@ for ifc in wwan5 wwan24; do
   echo "${st}" | grep -q '"up": true' || continue
   dev=$(echo "${st}" | jsonfilter -e '@.l3_device' 2>/dev/null)
   metric=$(echo "${st}" | jsonfilter -e '@.metric' 2>/dev/null)
+  # defaultroute=0 → шлюз в inactive.route; иначе в route
   gw=$(echo "${st}" | jsonfilter -e '@["inactive"]["route"][0].nexthop' 2>/dev/null)
   [ -n "${gw}" ] || gw=$(echo "${st}" | jsonfilter -e '@.route[0].nexthop' 2>/dev/null)
   [ -n "${dev}" ] && [ -n "${gw}" ] || continue
@@ -75,6 +83,7 @@ done
 
 [ -n "${best_gw}" ] && [ -n "${best_dev}" ] || exit 0
 
+# Один host-route: снять все копии (с metric тоже), поставить через лучший WISP
 ip -4 route show "${ENDPOINT}" 2>/dev/null | while read -r line; do
   # shellcheck disable=SC2086
   ip route del $line 2>/dev/null || true
@@ -82,6 +91,7 @@ done
 ip route replace "${ENDPOINT}/32" via "${best_gw}" dev "${best_dev}"
 
 uci -q delete network.endpoint_host 2>/dev/null || true
+# на случай дублей имени
 while uci -q delete network.endpoint_host 2>/dev/null; do :; done
 uci set network.endpoint_host=route
 uci set network.endpoint_host.interface="${best_if}"
@@ -101,7 +111,8 @@ else
   [ "${hs}" = "0" ] && need_up=1
 fi
 
-if [ "${need_up}" = "1" ]; then
+tm=$(cat /etc/amnezia/traffic-mode 2>/dev/null || echo vpn)
+if [ "${need_up}" = "1" ] && [ "${tm}" != "wisp" ]; then
   ifup "${WG_IF}" 2>/dev/null || true
 fi
 

@@ -1,13 +1,13 @@
 #!/bin/sh
-# Проверка AmneziaWG Cudy → VPS (Mac/ПК в LAN или Wi‑Fi Travel-VPN).
+# Проверка AmneziaWG Cudy → VPS (Mac в LAN Cudy или Wi-Fi Travel-VPN).
 #
 #   EXPECTED_IP=VPS_IP ROUTER=192.168.10.1 sh verify-awg.sh
-#   sh verify-awg.sh --long
+#   sh scripts/verify-awg.sh --long
 #
 set -eu
 
 ROUTER="${ROUTER:-192.168.10.1}"
-EXPECTED_IP="${EXPECTED_IP:-}"
+EXPECTED_IP="${EXPECTED_IP:?задайте EXPECTED_IP=публичный_IP_VPS}"
 LONG="${LONG:-0}"
 SSH_PASS="${ROUTER_SSH_PASS:-}"
 
@@ -16,11 +16,6 @@ for arg in "$@"; do
     --long) LONG=1 ;;
   esac
 done
-
-if [ -z "${EXPECTED_IP}" ]; then
-  echo "Задайте EXPECTED_IP=<публичный IP VPS>" >&2
-  exit 1
-fi
 
 ssh_router() {
   if [ -n "${SSH_PASS}" ] && command -v sshpass >/dev/null 2>&1; then
@@ -47,7 +42,7 @@ echo "default gateway → ${GW:-нет}"
 if [ "$GW" = "$ROUTER" ]; then
   ok "маршрут через Cudy"
 else
-  warn "шлюз не ${ROUTER} — подключите ПК к LAN/Wi‑Fi Travel-VPN Cudy"
+  warn "шлюз не ${ROUTER} — подключите Mac к LAN/Wi-Fi Travel-VPN Cudy"
 fi
 
 echo ""

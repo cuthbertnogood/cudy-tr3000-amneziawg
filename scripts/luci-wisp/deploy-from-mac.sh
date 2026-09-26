@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# С Mac/Linux: поставить страницу «Смена Wi‑Fi» на Cudy.
+# С ПК в LAN Cudy: страница «Смена Wi‑Fi».
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")" && pwd)"
 ROUTER="${ROUTER:-192.168.10.1}"
@@ -25,6 +25,7 @@ run_scp() {
 run_ssh "root@${ROUTER}" 'mkdir -p /tmp/wisp-ui'
 run_scp \
   "${ROOT}/wisp-switch.sh" \
+  "${ROOT}/wisp-scan-worker.sh" \
   "${ROOT}/switch.js" \
   "${ROOT}/luci-app-wisp-menu.json" \
   "${ROOT}/luci-app-wisp-acl.json" \

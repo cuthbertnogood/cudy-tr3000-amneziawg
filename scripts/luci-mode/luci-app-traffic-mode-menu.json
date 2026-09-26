@@ -1,0 +1,13 @@
+{
+	"admin/network/traffic-mode": {
+		"title": "Режим интернета",
+		"order": 13,
+		"action": {
+			"type": "view",
+			"path": "traffic-mode/mode"
+		},
+		"depends": {
+			"acl": [ "luci-app-traffic-mode" ]
+		}
+	}
+}

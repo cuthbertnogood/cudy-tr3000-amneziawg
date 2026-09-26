@@ -99,3 +99,15 @@ CLIENT_PUB='...' CLIENT_IP=10.9.0.3/32 sh awg-add-peer.sh
 | `awg-params.env` | тот же файл, что на VPS |
 
 Дальше: [04-connect-cudy.md](04-connect-cudy.md).
+
+## 6. Peer watchdog (рекомендуется)
+
+На VPS handshake иногда зависает у одного пира, пока UDP ещё доходит. Клиентский `ifdown`/`ifup` не помогает — нужен сброс пира на сервере.
+
+```sh
+cd /root/cudy-awg   # или каталог со скриптами vps/
+sudo sh awg-peer-watchdog.sh --install
+```
+
+Подробности: [08-tunnel-recovery.md](08-tunnel-recovery.md).
+

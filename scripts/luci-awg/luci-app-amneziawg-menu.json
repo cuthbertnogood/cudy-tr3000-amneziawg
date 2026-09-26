@@ -1,0 +1,24 @@
+{
+	"admin/network/amneziawg-status": {
+		"title": "Статус VPN",
+		"order": 14,
+		"action": {
+			"type": "view",
+			"path": "amneziawg/status"
+		},
+		"depends": {
+			"acl": [ "luci-app-amneziawg" ]
+		}
+	},
+	"admin/network/amneziawg": {
+		"title": "AmneziaWG",
+		"order": 15,
+		"action": {
+			"type": "view",
+			"path": "amneziawg/settings"
+		},
+		"depends": {
+			"acl": [ "luci-app-amneziawg" ]
+		}
+	}
+}

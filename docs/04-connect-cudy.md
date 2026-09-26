@@ -1,6 +1,6 @@
 # Подключение Cudy к VPS
 
-Предполагается: OpenWrt 24.10.5 на Cudy, сервер AmneziaWG на VPS, известны `AWG_SERVER_PUBKEY` и `VPS_IP`.
+Предполагается: OpenWrt 24.10.5 на Cudy, сервер AmneziaWG на VPS, известны `AWG_SERVER_PUBKEY` и публичный IP VPS.
 
 ## 1. Скопировать файлы на роутер
 
@@ -59,38 +59,56 @@ sh awg-apply.sh
 ## 5. Клиент AmneziaWG (второй проход)
 
 ```sh
-export WG_ENDPOINT=VPS_IP
+export WG_ENDPOINT=<публичный_IP_VPS>
 export AWG_SERVER_PUBKEY='...с VPS...'
 sh awg-apply.sh
 ```
 
-Скрипт настроит `wg0`, kill-switch, DNS через роутер, hotplug host-route.
+Скрипт настроит `wg0`, kill-switch, DNS через роутер, hotplug host-route. По умолчанию режим трафика — VPN.
 
 Проверка на роутере:
 
 ```sh
 awg show wg0
-ip route get VPS_IP
-wget -qO- http://ifconfig.me   # должен быть VPS_IP
+ip route get <публичный_IP_VPS>
+wget -qO- http://ifconfig.me   # должен быть IP VPS
 ```
 
-## 6. LuCI «Смена Wi‑Fi»
+## 6. LuCI
 
-С ПК:
+С ПК в LAN / `Travel-VPN`:
 
 ```sh
-cd scripts/luci-wisp
-ROUTER=192.168.10.1 ROUTER_SSH_PASS='...' sh deploy-from-mac.sh
-# или ssh + scp вручную, затем на роутере: sh install-wisp-ui.sh
+# Смена Wi‑Fi
+cd scripts/luci-wisp && ROUTER=192.168.10.1 sh deploy-from-mac.sh
+
+# Статус / настройки AmneziaWG
+cd ../luci-awg && ROUTER=192.168.10.1 sh deploy-from-mac.sh
+
+# Режим обычный / VPN (+ обновляет watchdog и mode-aware Смена Wi‑Fi)
+cd ../luci-mode && ROUTER=192.168.10.1 sh deploy-from-mac.sh
 ```
 
-## 7. Проверка с ноутбука
+Пароль root для `sshpass` (опционально): `ROUTER_SSH_PASS=...`.
+
+## 7. Client watchdog на Cudy
+
+Уже ставится из `luci-mode/deploy-from-mac.sh`. Вручную:
+
+```sh
+scp scripts/router/awg-client-watchdog.sh root@192.168.10.1:/tmp/
+ssh root@192.168.10.1 'sh /tmp/awg-client-watchdog.sh --install'
+```
+
+В режиме **Обычный** watchdog **не** поднимает `wg0`.
+
+## 8. Проверка с ноутбука
 
 Подключитесь к `Travel-VPN-*` или по кабелю. Шлюз `192.168.10.1`.
 
 ```sh
 cd scripts/router
-EXPECTED_IP=VPS_IP ROUTER=192.168.10.1 sh verify-awg.sh
+EXPECTED_IP=<публичный_IP_VPS> ROUTER=192.168.10.1 sh verify-awg.sh
 sh verify-awg.sh --long   # выдержка 3+ мин и kill-switch
 ```
 
@@ -98,9 +116,10 @@ sh verify-awg.sh --long   # выдержка 3+ мин и kill-switch
 
 | Симптом | Что проверить |
 |---------|----------------|
-| Handshake есть, IP не VPS | host-route: `ip route get VPS_IP` → через `phy*-sta*`, не `wg0` |
+| Handshake есть, IP не VPS | host-route: `ip route get <VPS_IP>` → через `phy*-sta*`, не `wg0` |
 | Нет handshake | UDP 443 до VPS с uplink; `awg-params` совпадают |
 | kmod не грузится | vermagic `.ko` и `uname -r` |
 | Клиенты без интернета при живом wg0 | форвардинг `lan→wg`, DNS `192.168.10.1` |
+| WISP жив, 0 B received | [08-tunnel-recovery.md](08-tunnel-recovery.md) |
 
-Смена uplink без SSH: [05-switch-wifi.md](05-switch-wifi.md).
+Смена uplink: [05-switch-wifi.md](05-switch-wifi.md). Режимы: [06-traffic-mode.md](06-traffic-mode.md).

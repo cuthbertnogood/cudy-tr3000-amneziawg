@@ -1,10 +1,10 @@
 # Cudy TR3000 + AmneziaWG на своём VPS
 
-Портативный VPN-шлюз: **Cudy TR3000** подключается к чужому Wi‑Fi (WISP), поднимает **AmneziaWG** до вашего **VPS**, раздаёт Wi‑Fi клиентам с выходом только через туннель (kill-switch).
+Портативный VPN-шлюз: **Cudy TR3000** подключается к чужому Wi‑Fi (WISP), поднимает **AmneziaWG** до вашего **VPS**, раздаёт Wi‑Fi клиентам. Два режима трафика: **VPN** (kill-switch через туннель) и **Обычный** (напрямую через WISP).
 
 Готовой «прошивки одним файлом» в репозитории нет: путь = официальный OpenWrt + модуль ядра + скрипты из этого репо.
 
-## Схема
+## Схема (режим VPN)
 
 ```mermaid
 flowchart TB
@@ -44,22 +44,29 @@ flowchart TB
 | 3. Поднять AmneziaWG на VPS | [docs/03-vps-amneziawg.md](docs/03-vps-amneziawg.md) |
 | 4. Связать Cudy с VPS | [docs/04-connect-cudy.md](docs/04-connect-cudy.md) |
 | 5. Смена uplink Wi‑Fi | [docs/05-switch-wifi.md](docs/05-switch-wifi.md) |
+| 6. Режим обычный / VPN | [docs/06-traffic-mode.md](docs/06-traffic-mode.md) |
+| 7. Страницы AmneziaWG в LuCI | [docs/07-amneziawg-ui.md](docs/07-amneziawg-ui.md) |
+| 8. Обрыв туннеля / watchdog | [docs/08-tunnel-recovery.md](docs/08-tunnel-recovery.md) |
+
+Для развёртывания **агентом LLM** (Cursor / Codex и т.п.): [AGENTS.md](AGENTS.md) — порядок, команды, env, критерии успеха и запреты.
 
 ## Быстрый порядок
 
 1. Прошить **Cudy TR3000 EU v1** (не 256 МБ): intermediate → OpenWrt **24.10.5+** → LAN `192.168.10.1`.
-2. На **VPS** (Ubuntu/Debian): `scripts/vps/awg-server.sh` с `CLIENT_PUB` с роутера.
-3. На **Cudy**: собрать/скопировать `amneziawg.ko`, `setup-wisp.sh`, `awg-apply.sh`, LuCI «Смена Wi‑Fi».
-4. Проверка: `EXPECTED_IP=VPS_IP sh scripts/router/verify-awg.sh`.
+2. На **VPS** (Ubuntu/Debian): `scripts/vps/awg-server.sh` с `CLIENT_PUB` с роутера; по желанию `awg-peer-watchdog.sh --install`.
+3. На **Cudy**: kmod, `setup-wisp.sh`, `awg-apply.sh`, LuCI «Смена Wi‑Fi», «AmneziaWG», «Режим интернета».
+4. Проверка в VPN: `EXPECTED_IP=<публичный_IP_VPS> sh scripts/router/verify-awg.sh`.
 
 Переменные: `scripts/router/router.env.example`, `scripts/vps/awg-params.env.example`.
 
 ## Состав репозитория
 
 ```
-scripts/vps/          — сервер AmneziaWG
-scripts/router/       — WISP, клиент AWG, hotplug, сборка kmod
+scripts/vps/          — сервер AmneziaWG + peer-watchdog
+scripts/router/       — WISP, клиент AWG, hotplug, client-watchdog, kmod
 scripts/luci-wisp/    — страница «Смена Wi‑Fi»
+scripts/luci-awg/     — страницы «Статус VPN» / «AmneziaWG»
+scripts/luci-mode/    — страница «Режим интернета» (обычный / VPN)
 artifacts/            — откуда качать OpenWrt, куда класть .ko
 ```
 

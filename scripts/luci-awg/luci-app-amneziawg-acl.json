@@ -1,0 +1,27 @@
+{
+	"luci-app-amneziawg": {
+		"description": "Настройка AmneziaWG на Cudy",
+		"read": {
+			"file": {
+				"/usr/libexec/awg-config.sh": [ "exec" ],
+				"/bin/sh": [ "exec" ],
+				"/tmp/awg-upload.conf": [ "read", "write" ],
+				"/tmp/awg-apply.kv": [ "read", "write" ]
+			},
+			"ubus": {
+				"file": [ "exec", "read", "write" ]
+			}
+		},
+		"write": {
+			"file": {
+				"/usr/libexec/awg-config.sh": [ "exec" ],
+				"/bin/sh": [ "exec" ],
+				"/tmp/awg-upload.conf": [ "read", "write" ],
+				"/tmp/awg-apply.kv": [ "read", "write" ]
+			},
+			"ubus": {
+				"file": [ "exec", "read", "write" ]
+			}
+		}
+	}
+}

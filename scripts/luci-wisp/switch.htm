@@ -1,0 +1,80 @@
+<%+header%>
+<style>
+.wisp-box { max-width: 42rem; }
+.wisp-status { margin: 1rem 0; padding: .75rem 1rem; background: #f6f8fa; border-radius: 6px; }
+.wisp-status .ok { color: #1a7f37; font-weight: 600; }
+.wisp-status .bad { color: #cf222e; font-weight: 600; }
+.wisp-msg { padding: .75rem 1rem; margin: 1rem 0; border-radius: 6px; background: #ddf4ff; }
+.wisp-err { padding: .75rem 1rem; margin: 1rem 0; border-radius: 6px; background: #ffebe9; }
+.wisp-list { width: 100%; border-collapse: collapse; margin: 1rem 0; }
+.wisp-list th, .wisp-list td { text-align: left; padding: .4rem .5rem; border-bottom: 1px solid #d0d7de; }
+.wisp-list tr:hover { background: #f6f8fa; }
+.wisp-actions { display: flex; gap: .75rem; flex-wrap: wrap; margin: 1rem 0; align-items: center; }
+.wisp-actions input[type=password] { min-width: 14rem; padding: .35rem .5rem; }
+.band-5 { color: #0550ae; }
+.band-24 { color: #8250df; }
+</style>
+
+<div class="wisp-box">
+<h2>Смена Wi‑Fi для VPN</h2>
+<p>Выберите чужую сеть, к которой подключится Cudy. Свои <code>Travel-VPN</code> не меняются. В режиме VPN туннель после подключения поднимается сам.</p>
+
+<div class="wisp-status">
+  <div>Сейчас 5&nbsp;ГГц: <strong><%=pcdata(status.ssid5 ~= "" and status.ssid5 or "—")%></strong>
+    <% if status.up5 == "1" then %><span class="ok">· онлайн</span><% else %><span class="bad">· нет связи</span><% end %></div>
+  <div>Сейчас 2,4&nbsp;ГГц: <strong><%=pcdata(status.ssid24 ~= "" and status.ssid24 or "—")%></strong>
+    <% if status.up24 == "1" then %><span class="ok">· онлайн</span><% else %><span class="bad">· нет связи</span><% end %></div>
+  <div>Туннель VPN:
+    <% if status.tunnel == "up" then %><span class="ok">работает</span>
+    <% else %><span class="bad">не поднят</span><% end %>
+  </div>
+</div>
+
+<% if msg then %><div class="wisp-msg"><%=pcdata(msg)%></div><% end %>
+<% if err then %><div class="wisp-err"><%=pcdata(err)%></div><% end %>
+
+<form method="post">
+  <input type="hidden" name="token" value="<%=token%>" />
+  <div class="wisp-actions">
+    <button type="submit" name="scan" value="1" class="cbi-button cbi-button-action">Найти сети</button>
+  </div>
+
+  <% if networks and #networks > 0 then %>
+  <table class="wisp-list">
+    <thead>
+      <tr><th></th><th>Сеть</th><th>Диапазон</th><th>Сигнал</th><th>Защита</th></tr>
+    </thead>
+    <tbody>
+    <% for i, n in ipairs(networks) do
+         local id = "n" .. tostring(i)
+         local val = tostring(n.band) .. ":::" .. n.ssid
+         local checked = (picked == n.ssid) and ' checked="checked"' or ''
+         local bandlabel = (n.band == "5") and "5 ГГц" or "2,4 ГГц"
+         local bandclass = (n.band == "5") and "band-5" or "band-24"
+    %>
+      <tr>
+        <td><input type="radio" name="choice" id="<%=id%>" value="<%=pcdata(val)%>"<%=checked%> /></td>
+        <td><label for="<%=id%>"><strong><%=pcdata(n.ssid)%></strong></label></td>
+        <td class="<%=bandclass%>"><%=bandlabel%></td>
+        <td><%=pcdata(n.signal)%> dBm</td>
+        <td><%=pcdata(n.enc)%></td>
+      </tr>
+    <% end %>
+    </tbody>
+  </table>
+
+  <div class="wisp-actions">
+    <label>Пароль сети&nbsp;
+      <input type="password" name="key" autocomplete="off" placeholder="пароль Wi‑Fi" />
+    </label>
+    <button type="submit" name="apply" value="1" class="cbi-button cbi-button-save"
+      onclick="if(!document.querySelector('input[name=choice]:checked')){alert('Сначала выберите сеть');return false;}">
+      Подключить и поднять VPN
+    </button>
+  </div>
+  <% elseif not err and not msg then %>
+  <p>Нажмите <strong>Найти сети</strong> → выберите сеть → введите пароль → <strong>Подключить и поднять VPN</strong>.</p>
+  <% end %>
+</form>
+</div>
+<%+footer%>

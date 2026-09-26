@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 148" role="img" aria-label=" 568< VPN: B@0D8: G5@57 BC==5;L">
+  <rect width="360" height="148" rx="12" fill="#f6f8fa"/>
+  <g fill="none" stroke="#24292f" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="16" y="50" width="32" height="50" rx="6" fill="#fff"/>
+    <rect x="24" y="58" width="16" height="22" rx="2" fill="#eaeef2" stroke="none"/>
+    <path d="M54 74h22" stroke="#0969da"/>
+    <rect x="80" y="56" width="44" height="32" rx="6" fill="#fff"/>
+    <path d="M90 72h24"/>
+    <path d="M128 74h22" stroke="#0969da" stroke-dasharray="3 3"/>
+    <rect x="154" y="58" width="22" height="18" rx="3" fill="#fff" stroke="#0969da"/>
+    <path d="M160 58v-6a5 5 0 0 1 10 0v6" stroke="#0969da"/>
+    <path d="M180 74h20" stroke="#0969da" stroke-dasharray="3 3"/>
+    <rect x="204" y="52" width="40" height="40" rx="4" fill="#fff" stroke="#0969da"/>
+    <path d="M214 64h20M214 72h14M214 80h18" stroke="#0969da"/>
+    <path d="M248 74h16" stroke="#0969da"/>
+    <circle cx="300" cy="74" r="26" fill="#fff"/>
+    <path d="M300 56c7 5 11 11 11 18s-4 13-11 18c-7-5-11-11-11-18s4-13 11-18z"/>
+    <path d="M286 74h28"/>
+  </g>
+  <text x="16" y="128" fill="#57606a" font-family="ui-sans-serif,system-ui,sans-serif" font-size="12">B5;5D>= � Cudy � BC==5;L � VPS � 8=B5@=5B</text>
+</svg>

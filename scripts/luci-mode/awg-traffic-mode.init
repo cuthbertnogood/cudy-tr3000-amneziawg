@@ -1,0 +1,8 @@
+#!/bin/sh /etc/rc.common
+# После загрузки вернуть traffic-mode, если UCI разъехался с файлом режима.
+START=99
+
+start() {
+	[ -x /usr/libexec/awg-mode.sh ] || return 0
+	/usr/libexec/awg-mode.sh boot
+}
