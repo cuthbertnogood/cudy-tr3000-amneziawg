@@ -1,0 +1,23 @@
+{
+	"luci-app-wisp": {
+		"description": "Смена Wi‑Fi для VPN-шлюза Cudy",
+		"read": {
+			"file": {
+				"/usr/libexec/wisp-switch.sh": [ "exec" ],
+				"/bin/sh": [ "exec" ]
+			},
+			"ubus": {
+				"file": [ "exec" ]
+			}
+		},
+		"write": {
+			"file": {
+				"/usr/libexec/wisp-switch.sh": [ "exec" ],
+				"/bin/sh": [ "exec" ]
+			},
+			"ubus": {
+				"file": [ "exec" ]
+			}
+		}
+	}
+}

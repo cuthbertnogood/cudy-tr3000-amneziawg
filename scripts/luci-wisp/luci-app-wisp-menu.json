@@ -1,0 +1,13 @@
+{
+	"admin/network/wisp": {
+		"title": "Смена Wi‑Fi",
+		"order": 16,
+		"action": {
+			"type": "view",
+			"path": "wisp/switch"
+		},
+		"depends": {
+			"acl": [ "luci-app-wisp" ]
+		}
+	}
+}

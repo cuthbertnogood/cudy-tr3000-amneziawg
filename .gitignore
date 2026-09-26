@@ -1,0 +1,6 @@
+scripts/router/out/
+*.ko
+.env
+awg-params.env
+router.env
+credentials.*
